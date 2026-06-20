@@ -47,6 +47,20 @@ void copy_struct(message *m, message original) //copies struct attributes becaus
 		m->pmw[i]=original.pmw[i];
 }
 
+void print_data(message m)
+{
+	printf("\n\n\n\n\n");
+	printf("temp=%.2f\n",m.temp);
+	printf("hum=%.2f\n",m.hum);
+	printf("bat=%.2f\n", m.bat);
+	printf("bat=%.2f\n",m.roll);
+	printf("pitch=%.2f\n",m.pitch);
+	printf("waw=%.2f\n",m.waw);
+	printf("alt=%.2f\n",m.alt);
+	for(int i=0;i<3;i++)
+		printf("pmw[%d] = %d\n", i, m.pmw[i]);
+	printf("\n\n\n\n");
+}
 
 int packet_number(int mtu,int bytes)
 {
@@ -106,55 +120,55 @@ void dummy_initializer(message *m)
 
 void main(int argc, char *argv[])
 {
-     char *unit=malloc(sizeof(char)*2); //throughput unit
-     int port;
-     char addr[15];
-     int mtu; //maximum transmission unit (varies per interface)
-     int recvbytes=0, sendbytes=0; //received bytes
-     through_data down_tp, up_tp;
-     up_tp.max=up_tp.avg=down_tp.max=down_tp.avg=0;
-     down_tp.min=up_tp.min=999999999999999999;
-     message data; //buffer to be sent/received
-     //send doesnt send structures propperly, so we need to convert the struct to a string
-     char send_buffer[sizeof(message)];
-     message *temp=(message *)send_buffer;
-     double l[10]; //latency vector
-     struct sockaddr_in sos;
-     int sock=socket(AF_INET,SOCK_STREAM,0);
-     FILE *mt = fopen("/sys/class/net/eth0/mtu","r");//unix device mtu size
-     double downthroughput[10], upthroughput[10]; //throughput vector for average throughput measurement
+	char *unit=malloc(sizeof(char)*2); //throughput unit
+	int port;
+	char addr[15];
+	int mtu; //maximum transmission unit (varies per interface)
+	int recvbytes=0, sendbytes=0; //received bytes
+	through_data down_tp, up_tp; 
+	up_tp.max=up_tp.avg=down_tp.max=down_tp.avg=0;
+	down_tp.min=up_tp.min=999999999999999999;
+	message data; //buffer to be sent/received
+	//send doesnt send structures propperly, so we need to convert the struct to a string
+	char send_buffer[sizeof(message)]; 
+	message *temp=(message *)send_buffer; 
+	double l[10]; //latency vector
+	struct sockaddr_in sos;
+	int sock=socket(AF_INET,SOCK_STREAM,0);
+	FILE *mt = fopen("/sys/class/net/eth0/mtu","r");//unix device mtu size
+	double downthroughput[10], upthroughput[10]; //throughput vector for average throughput measurement
 
 
-     if(argc>0)
-     {
-            if(argc==5)
-            {
-                    for(int i=1;i<argc;i++)
-                    {
-                           if(strcmp(argv[i],"-p")==0)
-                            {
-                                    i++;
-                                    port=atoi(argv[i++]);
-                             }
-                            if(strcmp(argv[i],"-a")==0)
-                            {
-                                   i++;
-                                   strcpy(addr,argv[i++]);
-                            }
-                    }
-            }
-    }
+	if(argc>0)
+	{
+		if(argc==5)
+		{
+			for(int i=1;i<argc;i++)
+			{
+				if(strcmp(argv[i],"-p")==0)
+				{
+					i++;
+					port=atoi(argv[i++]);
+				}
+				if(strcmp(argv[i],"-a")==0)
+				{
+					i++;
+					strcpy(addr,argv[i++]);
+				}
+			}
+		}
+	}
 	fscanf(mt,"%d", &mtu);
-    fclose(mt);
-    printf("mtu=%d\n",mtu);
-    sos.sin_port=htons(port);
-    sos.sin_family=AF_INET;
-    inet_pton(AF_INET,addr,(struct sockaddr *)&sos.sin_addr.s_addr);
-    connect(sock,(struct sockaddr *)&sos,sizeof(sos));
-    struct timespec start, end;
-    dummy_initializer(&data);
-    memset(send_buffer,0,sizeof(send_buffer));
-    copy_struct(temp,data);
+	fclose(mt);
+	printf("mtu=%d\n",mtu);
+	sos.sin_port=htons(port);
+	sos.sin_family=AF_INET;
+	inet_pton(AF_INET,addr,(struct sockaddr *)&sos.sin_addr.s_addr);
+	connect(sock,(struct sockaddr *)&sos,sizeof(sos));
+	struct timespec start, end;
+	dummy_initializer(&data);
+	memset(send_buffer,0,sizeof(send_buffer));
+	copy_struct(temp,data);
 	for(int i=0;i<10;i++)
 	{
 		clock_gettime(CLOCK_REALTIME, &start);

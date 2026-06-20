@@ -104,8 +104,9 @@ void dummy_initializer(message *m)
 }
 	
 
-void main()
+void main(int argc, char *argv[])
 {
+	int port, lnumber;
 	char *unit=malloc(sizeof(char)*2); //throughput unit
 	int mtu; //maximum transmission unit (varies per interface)
 	int recvbytes=0, sendbytes=0; //received bytes
@@ -123,9 +124,31 @@ void main()
 	FILE *mt = fopen("/sys/class/net/eth0/mtu","r");//unix device mtu size
 	double downthroughput[10], upthroughput[10]; //throughput vector for average throughput measurement
 
+	if(argc>0)
+	{
+		if(argc==5)
+		{
+			for(int i=0;i<argc;i++)
+			{
+				if(strcmp(argv[i],"-p")==0) //port
+				{
+					i++;
+					port=atoi(argv[i++]);
+				}
+				if(strcmp(argv[i],"-l")==0) 
+				{
+					i++;
+					lnumber=atoi(argv[i++]); //number of devices to listen
+				}
+			}
+		}
+	}
 	fscanf(mt,"%d", &mtu);
 	fclose(mt);
-	sos.sin_port=htons(6796);
+	printf("mtu=%d\n",mtu);
+	fscanf(mt,"%d", &mtu);
+	fclose(mt);
+	sos.sin_port=htons(port);
 	sos.sin_family=AF_INET;
 	sos.sin_addr.s_addr=INADDR_ANY;
 	int bs = bind(sock, (struct sockaddr *)&sos, sizeof(sos));
@@ -134,7 +157,7 @@ void main()
 		printf("error, reinitializing\n");
 		goto restart;
 	}
-	listen(sock,1);
+	listen(sock,lnumber);
 	int client=accept(sock, NULL, NULL);
 	struct timespec start, end;
 	dummy_initializer(&data);
