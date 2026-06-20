@@ -47,21 +47,6 @@ void copy_struct(message *m, message original) //copies struct attributes becaus
 		m->pmw[i]=original.pmw[i];
 }
 
-void print_data(message m)
-{
-	printf("\n\n\n\n\n");
-	printf("temp=%.2f\n",m.temp);
-	printf("hum=%.2f\n",m.hum);
-	printf("bat=%.2f\n", m.bat);
-	printf("bat=%.2f\n",m.roll);
-	printf("pitch=%.2f\n",m.pitch);
-	printf("waw=%.2f\n",m.waw);
-	printf("alt=%.2f\n",m.alt);
-	for(int i=0;i<3;i++)
-		printf("pmw[%d] = %d\n", i, m.pmw[i]);
-	printf("\n\n\n\n");
-}
-
 int packet_number(int mtu,int bytes)
 {
 	return ceil(bytes/(double)(MSS(mtu)));
