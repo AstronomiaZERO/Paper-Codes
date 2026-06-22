@@ -8,7 +8,6 @@
 #include<netinet/tcp.h>
 #include<netinet/in.h>	
 #include<arpa/inet.h>
-#include<pcap/pcap.h>
 
 
 #define overhead 40 //no additional headers were used, so assume 40B of IPv4 overhead
