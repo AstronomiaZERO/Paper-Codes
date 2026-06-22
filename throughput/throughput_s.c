@@ -105,7 +105,7 @@ void dummy_initializer(message *m)
 
 void main(int argc, char *argv[])
 {
-	int port, lnumber;
+	int port, lnumber; //lnumber == number of devices to listen to
 	char *unit=malloc(sizeof(char)*2); //throughput unit
 	int mtu; //maximum transmission unit (varies per interface)
 	int recvbytes=0, sendbytes=0; //received bytes
