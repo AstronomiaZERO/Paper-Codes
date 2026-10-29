@@ -10,7 +10,7 @@
 #include<arpa/inet.h>
 
 
-#define overhead 40 //no additional headers were used, so assume 40B of IPv4 overhead
+#define overhead 58 //no additional headers were used, so assume 58B of IPv4 TCP overhead (eth:18, ipv4:20, tcp:20)
 #define MSS(x) ((x) - overhead)
 
 
